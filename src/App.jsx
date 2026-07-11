@@ -35,11 +35,44 @@ function AppContent({ user, onLogout, loading }) {
   }
 
   if (!user) {
-    return <Login />;
+    return (
+      <div>
+        <Login />
+        <div style={{
+          position: 'fixed',
+          bottom: '10px',
+          right: '10px',
+          fontSize: '10px',
+          color: '#999',
+          fontFamily: 'monospace',
+          backgroundColor: '#f5f5f5',
+          padding: '4px 8px',
+          borderRadius: '3px',
+          border: '1px solid #ddd'
+        }}>
+          v{VERSION}
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
+      <div style={{
+        position: 'fixed',
+        bottom: '10px',
+        right: '10px',
+        fontSize: '10px',
+        color: '#999',
+        fontFamily: 'monospace',
+        backgroundColor: '#f5f5f5',
+        padding: '4px 8px',
+        borderRadius: '3px',
+        border: '1px solid #ddd',
+        zIndex: 1000
+      }}>
+        v{VERSION}
+      </div>
       <nav style={{ backgroundColor: '#f8f9fa', padding: '15px', borderBottom: '1px solid #ddd', marginBottom: '20px' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h1 style={{ margin: 0 }}>Pantry & Plate</h1>
@@ -78,6 +111,7 @@ function AppContent({ user, onLogout, loading }) {
 export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const VERSION = '0.1.0-mvp';
 
   useEffect(() => {
     const checkUser = async () => {
