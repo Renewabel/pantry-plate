@@ -6,6 +6,7 @@ import Profile from './components/Profile';
 import Stock from './components/Stock';
 import Recipes from './components/Recipes';
 import WeeklyPlanner from './components/WeeklyPlanner';
+import ReceiptOCR from './components/ReceiptOCR';
 
 const VERSION = '0.1.0-mvp';
 
@@ -85,6 +86,7 @@ function AppContent({ user, onLogout, loading }) {
             <Link to="/stock" style={{ textDecoration: 'none', color: '#007bff' }}>Stock</Link>
             <Link to="/recipes" style={{ textDecoration: 'none', color: '#007bff' }}>Recipes</Link>
             <Link to="/planner" style={{ textDecoration: 'none', color: '#007bff' }}>Planner</Link>
+            <Link to="/scanner" style={{ textDecoration: 'none', color: '#007bff' }}>Scanner</Link>
             <button
               onClick={onLogout}
               style={{
@@ -108,6 +110,7 @@ function AppContent({ user, onLogout, loading }) {
         <Route path="/stock" element={<Stock userId={user.id} />} />
         <Route path="/recipes" element={<Recipes userId={user.id} />} />
         <Route path="/planner" element={<WeeklyPlanner userId={user.id} />} />
+        <Route path="/scanner" element={<ReceiptOCR userId={user.id} />} />
       </Routes>
     </div>
   );
