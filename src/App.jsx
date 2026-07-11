@@ -6,6 +6,8 @@ import Profile from './components/Profile';
 import Stock from './components/Stock';
 import Recipes from './components/Recipes';
 
+const VERSION = '0.1.0-mvp';
+
 function MainDashboard({ userId, onLogout }) {
   return (
     <div style={{ maxWidth: '600px', margin: '50px auto', fontFamily: 'sans-serif', textAlign: 'center' }}>
@@ -111,7 +113,6 @@ function AppContent({ user, onLogout, loading }) {
 export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const VERSION = '0.1.0-mvp';
 
   useEffect(() => {
     const checkUser = async () => {
