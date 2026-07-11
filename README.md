@@ -2,6 +2,8 @@
 
 Real-time recipe & nutrition tracking app with multi-device sync (PC + mobile).
 
+**🚀 Live:** https://pantry-plate.vercel.app
+
 ## Quick Start
 
 ```bash
