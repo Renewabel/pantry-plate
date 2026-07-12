@@ -19,12 +19,11 @@ export default function Stock({ userId }) {
 
   const fetchStockItems = async () => {
     try {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('stock_items')
         .select('*')
         .eq('user_id', userId)
         .order('name');
-      if (error) throw error;
       setItems(data || []);
     } catch (err) {
       console.error('Error fetching stock:', err);
@@ -51,11 +50,11 @@ export default function Stock({ userId }) {
       ]);
       if (error) throw error;
       setNewItem({ name: '', is_staple: false, quantity: '', unit: 'g', status: 'ok' });
-      setMessage('Item added!');
+      setMessage('✅ Item added!');
       fetchStockItems();
       setTimeout(() => setMessage(''), 2000);
     } catch (err) {
-      setMessage('Error: ' + err.message);
+      setMessage('❌ Error: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -63,156 +62,143 @@ export default function Stock({ userId }) {
 
   const handleDeleteItem = async (id) => {
     try {
-      const { error } = await supabase.from('stock_items').delete().eq('id', id);
-      if (error) throw error;
+      await supabase.from('stock_items').delete().eq('id', id);
       fetchStockItems();
     } catch (err) {
-      setMessage('Error deleting item: ' + err.message);
-    }
-  };
-
-  const handleUpdateItem = async (id, updates) => {
-    try {
-      const { error } = await supabase.from('stock_items').update(updates).eq('id', id);
-      if (error) throw error;
-      fetchStockItems();
-    } catch (err) {
-      setMessage('Error updating item: ' + err.message);
+      setMessage('❌ Error: ' + err.message);
     }
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '20px auto', fontFamily: 'sans-serif' }}>
-      <h2>Stock</h2>
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <h2 className="text-3xl font-heading font-bold text-olive-900 mb-8">📦 Pantry Stock</h2>
 
-      <div style={{ border: '1px solid #ddd', padding: '15px', marginBottom: '20px', borderRadius: '5px' }}>
-        <h3>Add New Item</h3>
+      <div className="grid md:grid-cols-2 gap-8">
+        <div className="bg-white rounded-lg shadow-md p-6 border-t-4 border-mustard-500">
+          <h3 className="text-xl font-heading font-bold text-olive-900 mb-4">Add New Item</h3>
 
-        <div style={{ marginBottom: '10px' }}>
-          <label>Item Name:</label>
-          <input
-            type="text"
-            value={newItem.name}
-            onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-            placeholder="e.g., Chicken breast"
-          />
-        </div>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
+              <input
+                type="text"
+                value={newItem.name}
+                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mustard-500"
+                placeholder="e.g., Chicken breast"
+              />
+            </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          <label>
-            <input
-              type="checkbox"
-              checked={newItem.is_staple}
-              onChange={(e) =>
-                setNewItem({
-                  ...newItem,
-                  is_staple: e.target.checked,
-                  quantity: '',
-                  status: 'ok',
-                })
-              }
-            />
-            Staple (track exact quantity)
-          </label>
-        </div>
+            <label className="flex items-center gap-2 text-gray-700">
+              <input
+                type="checkbox"
+                checked={newItem.is_staple}
+                onChange={(e) =>
+                  setNewItem({
+                    ...newItem,
+                    is_staple: e.target.checked,
+                    quantity: '',
+                    status: 'ok',
+                  })
+                }
+                className="w-4 h-4 accent-mustard-500"
+              />
+              <span className="font-medium">Staple (exact quantity)</span>
+            </label>
 
-        {newItem.is_staple ? (
-          <>
-            <div style={{ marginBottom: '10px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            {newItem.is_staple ? (
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                    <input
+                      type="number"
+                      value={newItem.quantity}
+                      onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mustard-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+                    <select
+                      value={newItem.unit}
+                      onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mustard-500"
+                    >
+                      <option>g</option>
+                      <option>kg</option>
+                      <option>ml</option>
+                      <option>l</option>
+                      <option>unidad</option>
+                    </select>
+                  </div>
+                </div>
+              </>
+            ) : (
               <div>
-                <label>Quantity:</label>
-                <input
-                  type="number"
-                  value={newItem.quantity}
-                  onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
-                  style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-                />
-              </div>
-              <div>
-                <label>Unit:</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                 <select
-                  value={newItem.unit}
-                  onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
-                  style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                  value={newItem.status}
+                  onChange={(e) => setNewItem({ ...newItem, status: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mustard-500"
                 >
-                  <option>g</option>
-                  <option>kg</option>
-                  <option>ml</option>
-                  <option>l</option>
-                  <option>unidad</option>
+                  <option value="ok">✅ OK</option>
+                  <option value="low">⚠️ Low</option>
+                  <option value="out">❌ Out</option>
                 </select>
               </div>
-            </div>
-          </>
-        ) : (
-          <div style={{ marginBottom: '10px' }}>
-            <label>Status:</label>
-            <select
-              value={newItem.status}
-              onChange={(e) => setNewItem({ ...newItem, status: e.target.value })}
-              style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+            )}
+
+            {message && (
+              <div className={`p-3 rounded-lg text-sm font-medium ${
+                message.includes('✅') 
+                  ? 'bg-green-100 text-green-800' 
+                  : 'bg-tomato-100 text-tomato-800'
+              }`}>
+                {message}
+              </div>
+            )}
+
+            <button
+              onClick={handleAddItem}
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-mustard-400 to-mustard-500 text-white font-medium py-2 rounded-lg hover:from-mustard-500 hover:to-mustard-600 transition disabled:opacity-50"
             >
-              <option value="ok">OK</option>
-              <option value="low">Low</option>
-              <option value="out">Out</option>
-            </select>
+              {loading ? '⏳ Adding...' : '➕ Add Item'}
+            </button>
           </div>
-        )}
+        </div>
 
-        {message && <p style={{ color: message.includes('Error') ? 'red' : 'green' }}>{message}</p>}
-
-        <button
-          onClick={handleAddItem}
-          disabled={loading}
-          style={{ width: '100%', padding: '10px', backgroundColor: '#28a745', color: 'white', border: 'none', cursor: 'pointer' }}
-        >
-          {loading ? 'Adding...' : 'Add Item'}
-        </button>
-      </div>
-
-      <div>
-        <h3>Stock Items</h3>
-        {items.length === 0 ? (
-          <p>No items yet</p>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ borderBottom: '2px solid #ddd' }}>
-                <th style={{ textAlign: 'left', padding: '10px' }}>Name</th>
-                <th style={{ textAlign: 'left', padding: '10px' }}>Type</th>
-                <th style={{ textAlign: 'left', padding: '10px' }}>Value</th>
-                <th style={{ textAlign: 'left', padding: '10px' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item) => (
-                <tr key={item.id} style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={{ padding: '10px' }}>{item.name}</td>
-                  <td style={{ padding: '10px' }}>{item.is_staple ? 'Staple' : 'Extra'}</td>
-                  <td style={{ padding: '10px' }}>
-                    {item.is_staple ? `${item.quantity} ${item.unit}` : item.status}
-                  </td>
-                  <td style={{ padding: '10px' }}>
-                    <button
-                      onClick={() => handleDeleteItem(item.id)}
-                      style={{
-                        padding: '5px 10px',
-                        backgroundColor: '#dc3545',
-                        color: 'white',
-                        border: 'none',
-                        cursor: 'pointer',
-                        borderRadius: '3px',
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-xl font-heading font-bold text-olive-900 mb-4">Items ({items.length})</h3>
+          <div className="space-y-2 max-h-96 overflow-y-auto">
+            {items.length === 0 ? (
+              <p className="text-gray-500 text-center py-8">No items yet</p>
+            ) : (
+              items.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                >
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900">{item.name}</p>
+                    <p className="text-xs text-gray-600">
+                      {item.is_staple
+                        ? `${item.quantity} ${item.unit}`
+                        : `Status: ${item.status}`}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteItem(item.id)}
+                    className="ml-2 px-3 py-1 text-sm bg-tomato-100 text-tomato-600 rounded hover:bg-tomato-200 transition"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

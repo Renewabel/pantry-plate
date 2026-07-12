@@ -28,7 +28,7 @@ export default function Profile({ userId }) {
 
   const fetchProfile = async () => {
     try {
-      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
       if (data) setProfile(data);
     } catch (err) {
       console.log('No profile yet');
@@ -54,103 +54,125 @@ export default function Profile({ userId }) {
         ...profile,
       });
       if (error) throw error;
-      setMessage('Profile saved!');
+      setMessage('✅ Profile saved!');
       setTimeout(() => setMessage(''), 2000);
     } catch (err) {
-      setMessage('Error: ' + err.message);
+      setMessage('❌ Error: ' + err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: '500px', margin: '20px auto', fontFamily: 'sans-serif' }}>
-      <h2>Profile & Macros</h2>
+    <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="bg-white rounded-lg shadow-md p-8">
+        <h2 className="text-3xl font-heading font-bold text-olive-900 mb-8">👤 Your Profile</h2>
 
-      <div style={{ marginBottom: '15px' }}>
-        <label>Weight (kg):</label>
-        <input
-          type="number"
-          value={profile.weight_kg}
-          onChange={(e) => setProfile({ ...profile, weight_kg: e.target.value })}
-          style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-        />
-      </div>
+        <div className="grid md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Weight (kg)</label>
+            <input
+              type="number"
+              value={profile.weight_kg}
+              onChange={(e) => setProfile({ ...profile, weight_kg: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-olive-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Height (cm)</label>
+            <input
+              type="number"
+              value={profile.height_cm}
+              onChange={(e) => setProfile({ ...profile, height_cm: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-olive-500"
+            />
+          </div>
+        </div>
 
-      <div style={{ marginBottom: '15px' }}>
-        <label>Height (cm):</label>
-        <input
-          type="number"
-          value={profile.height_cm}
-          onChange={(e) => setProfile({ ...profile, height_cm: e.target.value })}
-          style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-        />
-      </div>
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Target Daily Calories</label>
+          <input
+            type="number"
+            value={profile.target_calories}
+            onChange={(e) => setProfile({ ...profile, target_calories: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-olive-500"
+            placeholder="e.g., 2000"
+          />
+        </div>
 
-      <div style={{ marginBottom: '15px' }}>
-        <label>Target Calories:</label>
-        <input
-          type="number"
-          value={profile.target_calories}
-          onChange={(e) => setProfile({ ...profile, target_calories: e.target.value })}
-          style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-        />
-      </div>
+        <div className="mb-8">
+          <label className="block text-sm font-medium text-gray-700 mb-3">Macro Preset</label>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+            {Object.keys(PRESETS).map((key) => (
+              <button
+                key={key}
+                onClick={() => handlePresetChange(key)}
+                className={`py-2 px-3 rounded-lg font-medium text-sm transition ${
+                  profile.target_preset === key
+                    ? 'bg-olive-500 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {key}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      <div style={{ marginBottom: '15px' }}>
-        <label>Preset:</label>
-        <select
-          value={profile.target_preset}
-          onChange={(e) => handlePresetChange(e.target.value)}
-          style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+        <div className="bg-gradient-to-r from-olive-50 to-mustard-50 rounded-lg p-6 mb-6 border-l-4 border-olive-500">
+          <h3 className="font-heading font-bold text-olive-900 mb-4">Macro Distribution</h3>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center">
+              <div className="text-3xl font-mono font-bold text-olive-600">{profile.target_protein_pct}%</div>
+              <p className="text-sm text-gray-600 mt-1">Protein</p>
+              <input
+                type="number"
+                value={profile.target_protein_pct}
+                onChange={(e) => setProfile({ ...profile, target_protein_pct: Number(e.target.value) })}
+                className="w-full mt-2 px-2 py-1 text-center border border-gray-300 rounded text-sm"
+              />
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-mono font-bold text-mustard-600">{profile.target_carbs_pct}%</div>
+              <p className="text-sm text-gray-600 mt-1">Carbs</p>
+              <input
+                type="number"
+                value={profile.target_carbs_pct}
+                onChange={(e) => setProfile({ ...profile, target_carbs_pct: Number(e.target.value) })}
+                className="w-full mt-2 px-2 py-1 text-center border border-gray-300 rounded text-sm"
+              />
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-mono font-bold text-tomato-600">{profile.target_fat_pct}%</div>
+              <p className="text-sm text-gray-600 mt-1">Fat</p>
+              <input
+                type="number"
+                value={profile.target_fat_pct}
+                onChange={(e) => setProfile({ ...profile, target_fat_pct: Number(e.target.value) })}
+                className="w-full mt-2 px-2 py-1 text-center border border-gray-300 rounded text-sm"
+              />
+            </div>
+          </div>
+        </div>
+
+        {message && (
+          <div className={`p-4 rounded-lg mb-6 text-sm font-medium ${
+            message.includes('✅') 
+              ? 'bg-green-100 text-green-800' 
+              : 'bg-tomato-100 text-tomato-800'
+          }`}>
+            {message}
+          </div>
+        )}
+
+        <button
+          onClick={handleSave}
+          disabled={loading}
+          className="w-full bg-gradient-to-r from-olive-500 to-olive-600 text-white font-medium py-3 rounded-lg hover:from-olive-600 hover:to-olive-700 transition disabled:opacity-50"
         >
-          {Object.keys(PRESETS).map((key) => (
-            <option key={key} value={key}>
-              {key}
-            </option>
-          ))}
-        </select>
+          {loading ? '⏳ Saving...' : '💾 Save Profile'}
+        </button>
       </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '15px' }}>
-        <div>
-          <label>Protein %:</label>
-          <input
-            type="number"
-            value={profile.target_protein_pct}
-            onChange={(e) => setProfile({ ...profile, target_protein_pct: Number(e.target.value) })}
-            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-          />
-        </div>
-        <div>
-          <label>Carbs %:</label>
-          <input
-            type="number"
-            value={profile.target_carbs_pct}
-            onChange={(e) => setProfile({ ...profile, target_carbs_pct: Number(e.target.value) })}
-            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-          />
-        </div>
-        <div>
-          <label>Fat %:</label>
-          <input
-            type="number"
-            value={profile.target_fat_pct}
-            onChange={(e) => setProfile({ ...profile, target_fat_pct: Number(e.target.value) })}
-            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-          />
-        </div>
-      </div>
-
-      {message && <p style={{ color: message.includes('Error') ? 'red' : 'green' }}>{message}</p>}
-
-      <button
-        onClick={handleSave}
-        disabled={loading}
-        style={{ width: '100%', padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', cursor: 'pointer' }}
-      >
-        {loading ? 'Saving...' : 'Save Profile'}
-      </button>
     </div>
   );
 }
