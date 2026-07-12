@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { supabase } from './lib/supabaseClient';
 import Login from './components/Login';
 import Profile from './components/Profile';
@@ -10,95 +10,109 @@ import ReceiptOCR from './components/ReceiptOCR';
 
 const VERSION = '0.1.0-mvp';
 
-function MainDashboard({ userId, onLogout }) {
+function MainDashboard() {
   return (
-    <div className="max-w-2xl mx-auto py-20 px-4 text-center">
-      <h2 className="text-4xl font-heading font-bold text-olive-900 mb-4">🍽️ Welcome to Pantry & Plate</h2>
-      <p className="text-lg text-gray-600">Manage your nutrition, recipes, and weekly meal plans all in one place.</p>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-12">
-        <Link to="/profile" className="p-6 bg-olive-50 rounded-lg hover:bg-olive-100 transition">
-          <div className="text-3xl mb-2">👤</div>
-          <p className="font-heading font-semibold text-olive-900">Profile</p>
+    <div className="pb-24 px-4 py-8">
+      <h1 className="text-3xl font-bold text-gray-900 mb-1">Pantry & Plate</h1>
+      <p className="text-gray-600 mb-8">Manage nutrition & recipes</p>
+
+      <div className="space-y-3">
+        <Link to="/profile" className="flex items-center gap-4 p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition">
+          <span className="text-2xl">👤</span>
+          <div>
+            <p className="font-semibold text-gray-900">Profile</p>
+            <p className="text-sm text-gray-500">Macros & settings</p>
+          </div>
         </Link>
-        <Link to="/stock" className="p-6 bg-mustard-50 rounded-lg hover:bg-mustard-100 transition">
-          <div className="text-3xl mb-2">📦</div>
-          <p className="font-heading font-semibold text-olive-900">Stock</p>
+
+        <Link to="/stock" className="flex items-center gap-4 p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition">
+          <span className="text-2xl">📦</span>
+          <div>
+            <p className="font-semibold text-gray-900">Stock</p>
+            <p className="text-sm text-gray-500">Pantry inventory</p>
+          </div>
         </Link>
-        <Link to="/recipes" className="p-6 bg-tomato-50 rounded-lg hover:bg-tomato-100 transition">
-          <div className="text-3xl mb-2">🍳</div>
-          <p className="font-heading font-semibold text-olive-900">Recipes</p>
+
+        <Link to="/recipes" className="flex items-center gap-4 p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition">
+          <span className="text-2xl">🍳</span>
+          <div>
+            <p className="font-semibold text-gray-900">Recipes</p>
+            <p className="text-sm text-gray-500">Your recipes</p>
+          </div>
         </Link>
-        <Link to="/planner" className="p-6 bg-olive-50 rounded-lg hover:bg-olive-100 transition">
-          <div className="text-3xl mb-2">📅</div>
-          <p className="font-heading font-semibold text-olive-900">Planner</p>
-        </Link>
-        <Link to="/scanner" className="p-6 bg-mustard-50 rounded-lg hover:bg-mustard-100 transition">
-          <div className="text-3xl mb-2">📸</div>
-          <p className="font-heading font-semibold text-olive-900">Scanner</p>
+
+        <Link to="/planner" className="flex items-center gap-4 p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition">
+          <span className="text-2xl">📅</span>
+          <div>
+            <p className="font-semibold text-gray-900">Planner</p>
+            <p className="text-sm text-gray-500">Weekly meals</p>
+          </div>
         </Link>
       </div>
     </div>
   );
 }
 
+function BottomNav() {
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path;
+
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-20">
+      <Link to="/" className={`flex flex-col items-center justify-center w-full h-full gap-1 ${isActive('/') ? 'text-success' : 'text-gray-600'}`}>
+        <span className="text-2xl">🏠</span>
+        <span className="text-xs font-medium">Home</span>
+      </Link>
+      <Link to="/stock" className={`flex flex-col items-center justify-center w-full h-full gap-1 ${isActive('/stock') ? 'text-success' : 'text-gray-600'}`}>
+        <span className="text-2xl">📦</span>
+        <span className="text-xs font-medium">Stock</span>
+      </Link>
+      <Link to="/recipes" className={`flex flex-col items-center justify-center w-full h-full gap-1 ${isActive('/recipes') ? 'text-success' : 'text-gray-600'}`}>
+        <span className="text-2xl">🍳</span>
+        <span className="text-xs font-medium">Recipes</span>
+      </Link>
+      <Link to="/planner" className={`flex flex-col items-center justify-center w-full h-full gap-1 ${isActive('/planner') ? 'text-success' : 'text-gray-600'}`}>
+        <span className="text-2xl">📅</span>
+        <span className="text-xs font-medium">Planner</span>
+      </Link>
+      <Link to="/scanner" className={`flex flex-col items-center justify-center w-full h-full gap-1 ${isActive('/scanner') ? 'text-success' : 'text-gray-600'}`}>
+        <span className="text-2xl">📸</span>
+        <span className="text-xs font-medium">Scan</span>
+      </Link>
+    </nav>
+  );
+}
+
 function AppContent({ user, onLogout, loading }) {
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4">🌾</div>
-          <h2 className="text-2xl font-heading font-bold text-olive-900 mb-2">Loading...</h2>
-          <p className="text-gray-600">Conectando a Supabase...</p>
-        </div>
+      <div className="min-h-screen flex flex-col justify-center items-center bg-white">
+        <h2 className="text-2xl font-bold text-gray-900">Loading...</h2>
       </div>
     );
   }
 
   if (!user) {
-    return (
-      <div className="relative">
-        <Login />
-        <div className="fixed bottom-3 right-3 text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded border border-gray-300 z-50">
-          v{VERSION}
-        </div>
-      </div>
-    );
+    return <Login />;
   }
 
   return (
-    <div className="relative">
-      <div className="fixed bottom-3 right-3 text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded border border-gray-300 z-50">
-        v{VERSION}
+    <div className="min-h-screen bg-gray-50">
+      <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-40">
+        <div className="px-4 py-3 flex justify-between items-center">
+          <h1 className="text-xl font-bold text-gray-900">Pantry & Plate</h1>
+          <button
+            onClick={onLogout}
+            className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 font-medium"
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
-      <nav className="bg-gradient-to-r from-olive-50 to-olive-100 border-b-2 border-olive-300 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center gap-2 no-underline">
-              <span className="text-3xl">🌾</span>
-              <h1 className="text-2xl font-heading font-bold text-olive-900">Pantry & Plate</h1>
-            </Link>
-            <div className="flex gap-1 items-center">
-              <Link to="/" className="px-3 py-2 text-olive-700 hover:bg-olive-200 rounded transition font-medium text-sm">Home</Link>
-              <Link to="/profile" className="px-3 py-2 text-olive-700 hover:bg-olive-200 rounded transition font-medium text-sm">Profile</Link>
-              <Link to="/stock" className="px-3 py-2 text-olive-700 hover:bg-olive-200 rounded transition font-medium text-sm">Stock</Link>
-              <Link to="/recipes" className="px-3 py-2 text-olive-700 hover:bg-olive-200 rounded transition font-medium text-sm">Recipes</Link>
-              <Link to="/planner" className="px-3 py-2 text-olive-700 hover:bg-olive-200 rounded transition font-medium text-sm">Planner</Link>
-              <Link to="/scanner" className="px-3 py-2 text-olive-700 hover:bg-olive-200 rounded transition font-medium text-sm">Scanner</Link>
-              <button
-                onClick={onLogout}
-                className="ml-2 px-4 py-2 bg-tomato-500 text-white rounded hover:bg-tomato-600 transition font-medium text-sm"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main className="flex-1">
+      <main className="pt-16">
         <Routes>
-          <Route path="/" element={<MainDashboard userId={user.id} onLogout={onLogout} />} />
+          <Route path="/" element={<MainDashboard />} />
           <Route path="/profile" element={<Profile userId={user.id} />} />
           <Route path="/stock" element={<Stock userId={user.id} />} />
           <Route path="/recipes" element={<Recipes userId={user.id} />} />
@@ -106,6 +120,12 @@ function AppContent({ user, onLogout, loading }) {
           <Route path="/scanner" element={<ReceiptOCR userId={user.id} />} />
         </Routes>
       </main>
+
+      <BottomNav />
+
+      <div className="fixed bottom-24 right-4 text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded">
+        v{VERSION}
+      </div>
     </div>
   );
 }
