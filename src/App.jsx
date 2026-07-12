@@ -12,9 +12,31 @@ const VERSION = '0.1.0-mvp';
 
 function MainDashboard({ userId, onLogout }) {
   return (
-    <div style={{ maxWidth: '600px', margin: '50px auto', fontFamily: 'sans-serif', textAlign: 'center' }}>
-      <h2>Welcome to Pantry & Plate</h2>
-      <p>Use the navigation above to manage your profile, macros, and stock.</p>
+    <div className="max-w-2xl mx-auto py-20 px-4 text-center">
+      <h2 className="text-4xl font-heading font-bold text-olive-900 mb-4">🍽️ Welcome to Pantry & Plate</h2>
+      <p className="text-lg text-gray-600">Manage your nutrition, recipes, and weekly meal plans all in one place.</p>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-12">
+        <Link to="/profile" className="p-6 bg-olive-50 rounded-lg hover:bg-olive-100 transition">
+          <div className="text-3xl mb-2">👤</div>
+          <p className="font-heading font-semibold text-olive-900">Profile</p>
+        </Link>
+        <Link to="/stock" className="p-6 bg-mustard-50 rounded-lg hover:bg-mustard-100 transition">
+          <div className="text-3xl mb-2">📦</div>
+          <p className="font-heading font-semibold text-olive-900">Stock</p>
+        </Link>
+        <Link to="/recipes" className="p-6 bg-tomato-50 rounded-lg hover:bg-tomato-100 transition">
+          <div className="text-3xl mb-2">🍳</div>
+          <p className="font-heading font-semibold text-olive-900">Recipes</p>
+        </Link>
+        <Link to="/planner" className="p-6 bg-olive-50 rounded-lg hover:bg-olive-100 transition">
+          <div className="text-3xl mb-2">📅</div>
+          <p className="font-heading font-semibold text-olive-900">Planner</p>
+        </Link>
+        <Link to="/scanner" className="p-6 bg-mustard-50 rounded-lg hover:bg-mustard-100 transition">
+          <div className="text-3xl mb-2">📸</div>
+          <p className="font-heading font-semibold text-olive-900">Scanner</p>
+        </Link>
+      </div>
     </div>
   );
 }
@@ -22,38 +44,21 @@ function MainDashboard({ userId, onLogout }) {
 function AppContent({ user, onLogout, loading }) {
   if (loading) {
     return (
-      <div style={{
-        padding: '50px',
-        textAlign: 'center',
-        fontFamily: 'sans-serif',
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}>
-        <h2>Loading...</h2>
-        <p>Conectando a Supabase...</p>
+      <div className="min-h-screen flex flex-col justify-center items-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🌾</div>
+          <h2 className="text-2xl font-heading font-bold text-olive-900 mb-2">Loading...</h2>
+          <p className="text-gray-600">Conectando a Supabase...</p>
+        </div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div>
+      <div className="relative">
         <Login />
-        <div style={{
-          position: 'fixed',
-          bottom: '10px',
-          right: '10px',
-          fontSize: '10px',
-          color: '#999',
-          fontFamily: 'monospace',
-          backgroundColor: '#f5f5f5',
-          padding: '4px 8px',
-          borderRadius: '3px',
-          border: '1px solid #ddd'
-        }}>
+        <div className="fixed bottom-3 right-3 text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded border border-gray-300 z-50">
           v{VERSION}
         </div>
       </div>
@@ -61,57 +66,46 @@ function AppContent({ user, onLogout, loading }) {
   }
 
   return (
-    <div style={{ position: 'relative' }}>
-      <div style={{
-        position: 'fixed',
-        bottom: '10px',
-        right: '10px',
-        fontSize: '10px',
-        color: '#999',
-        fontFamily: 'monospace',
-        backgroundColor: '#f5f5f5',
-        padding: '4px 8px',
-        borderRadius: '3px',
-        border: '1px solid #ddd',
-        zIndex: 1000
-      }}>
+    <div className="relative">
+      <div className="fixed bottom-3 right-3 text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded border border-gray-300 z-50">
         v{VERSION}
       </div>
-      <nav style={{ backgroundColor: '#f8f9fa', padding: '15px', borderBottom: '1px solid #ddd', marginBottom: '20px' }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 style={{ margin: 0 }}>Pantry & Plate</h1>
-          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <Link to="/" style={{ textDecoration: 'none', color: '#007bff' }}>Home</Link>
-            <Link to="/profile" style={{ textDecoration: 'none', color: '#007bff' }}>Profile</Link>
-            <Link to="/stock" style={{ textDecoration: 'none', color: '#007bff' }}>Stock</Link>
-            <Link to="/recipes" style={{ textDecoration: 'none', color: '#007bff' }}>Recipes</Link>
-            <Link to="/planner" style={{ textDecoration: 'none', color: '#007bff' }}>Planner</Link>
-            <Link to="/scanner" style={{ textDecoration: 'none', color: '#007bff' }}>Scanner</Link>
-            <button
-              onClick={onLogout}
-              style={{
-                padding: '8px 15px',
-                backgroundColor: '#dc3545',
-                color: 'white',
-                border: 'none',
-                cursor: 'pointer',
-                borderRadius: '3px',
-              }}
-            >
-              Logout
-            </button>
+
+      <nav className="bg-gradient-to-r from-olive-50 to-olive-100 border-b-2 border-olive-300 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            <Link to="/" className="flex items-center gap-2 no-underline">
+              <span className="text-3xl">🌾</span>
+              <h1 className="text-2xl font-heading font-bold text-olive-900">Pantry & Plate</h1>
+            </Link>
+            <div className="flex gap-1 items-center">
+              <Link to="/" className="px-3 py-2 text-olive-700 hover:bg-olive-200 rounded transition font-medium text-sm">Home</Link>
+              <Link to="/profile" className="px-3 py-2 text-olive-700 hover:bg-olive-200 rounded transition font-medium text-sm">Profile</Link>
+              <Link to="/stock" className="px-3 py-2 text-olive-700 hover:bg-olive-200 rounded transition font-medium text-sm">Stock</Link>
+              <Link to="/recipes" className="px-3 py-2 text-olive-700 hover:bg-olive-200 rounded transition font-medium text-sm">Recipes</Link>
+              <Link to="/planner" className="px-3 py-2 text-olive-700 hover:bg-olive-200 rounded transition font-medium text-sm">Planner</Link>
+              <Link to="/scanner" className="px-3 py-2 text-olive-700 hover:bg-olive-200 rounded transition font-medium text-sm">Scanner</Link>
+              <button
+                onClick={onLogout}
+                className="ml-2 px-4 py-2 bg-tomato-500 text-white rounded hover:bg-tomato-600 transition font-medium text-sm"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </nav>
 
-      <Routes>
-        <Route path="/" element={<MainDashboard userId={user.id} onLogout={onLogout} />} />
-        <Route path="/profile" element={<Profile userId={user.id} />} />
-        <Route path="/stock" element={<Stock userId={user.id} />} />
-        <Route path="/recipes" element={<Recipes userId={user.id} />} />
-        <Route path="/planner" element={<WeeklyPlanner userId={user.id} />} />
-        <Route path="/scanner" element={<ReceiptOCR userId={user.id} />} />
-      </Routes>
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<MainDashboard userId={user.id} onLogout={onLogout} />} />
+          <Route path="/profile" element={<Profile userId={user.id} />} />
+          <Route path="/stock" element={<Stock userId={user.id} />} />
+          <Route path="/recipes" element={<Recipes userId={user.id} />} />
+          <Route path="/planner" element={<WeeklyPlanner userId={user.id} />} />
+          <Route path="/scanner" element={<ReceiptOCR userId={user.id} />} />
+        </Routes>
+      </main>
     </div>
   );
 }
